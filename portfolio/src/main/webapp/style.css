@@ -4,6 +4,24 @@
   width: 650px;
 }
 
-#greeting-container {
+#fact-container {
   margin-top: 20px;
+  font-family: Cambria;
+  text-align: center;
+  color:red;
+}
+
+#btn {
+    text-align: center;
+}
+
+h1 {
+    font-family: Cambria;
+    text-align: center
+}
+
+p {
+    font-family: Cambria;
+    text-align:center;
+    color: blue;
 }
