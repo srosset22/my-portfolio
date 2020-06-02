@@ -28,3 +28,10 @@ function addRandomFact() {
   
   console.log("Testing JavaScript console!");
 }
+
+function getGreeting() {
+  const greeting = 'Hello Sophia!';
+  fetch('/data').then(response => response.text()).then((greeting) => {
+    document.getElementById('greeting-container').innerText = greeting;
+  });
+}
