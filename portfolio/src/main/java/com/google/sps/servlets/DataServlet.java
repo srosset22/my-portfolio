@@ -19,6 +19,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.google.sps.data.ServerStats;
+//import com.google.gson.Gson;
+import java.util.Date;
+//import com.google.sps.servlets.Dataservlet;
+import java.util.ArrayList;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -28,5 +33,43 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
     response.getWriter().println("<h1>Hello Sophia!</h1>");
+
+    //ArrayList<String> cities= new ArrayList<>();
+    //cities.add("New York");
+    //cities.add("London");
+    //cities.add("Tokyo");
+    String cityOne = "Paris";
+    String cityTwo = "New York";
+    String cityThree = "Tokyo";
+    //console.log(cities);
+
+    // Convert the cities content to JSON
+    ServerStats serverStats = new ServerStats(cityOne, cityTwo, cityThree);
+    String json = convertToJson(serverStats);
+
+    // Send the JSON as the response
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
+
   }
+
+  /**
+   * Converts a ServerStats instance into a JSON string using manual String concatentation.
+  */
+  private String convertToJson(ServerStats serverStats) {
+    String json = "{";
+    json += "\"city\": ";
+    json += "\"" + serverStats.getCityOne() + "\"";
+    json += ", ";
+    json += "\"city\": ";
+    json += "\"" + serverStats.getCityTwo() + "\"";
+    json += ", ";
+    json += "\"city\": ";
+    json += "\"" + serverStats.getCityThree() + "\"";
+    json += "}";
+    return json;
+  }
+
 }
+
+
