@@ -31,8 +31,8 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello Sophia!</h1>");
+    //response.setContentType("text/html;");
+    //response.getWriter().println("<h1>Hello Sophia!</h1>");
 
     //ArrayList<String> cities= new ArrayList<>();
     //cities.add("New York");
@@ -58,13 +58,13 @@ public class DataServlet extends HttpServlet {
   */
   private String convertToJson(ServerStats serverStats) {
     String json = "{";
-    json += "\"city\": ";
+    json += "\"cityOne\": ";
     json += "\"" + serverStats.getCityOne() + "\"";
     json += ", ";
-    json += "\"city\": ";
+    json += "\"cityTwo\": ";
     json += "\"" + serverStats.getCityTwo() + "\"";
     json += ", ";
-    json += "\"city\": ";
+    json += "\"cityThree\": ";
     json += "\"" + serverStats.getCityThree() + "\"";
     json += "}";
     return json;
