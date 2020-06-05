@@ -36,25 +36,6 @@ function getGreeting() {
 }
 */
 
-function showCities() {
-    fetch('/data').then(response => response.json()).then((cities) => {
-    // cities is an object, not a string, so we have to
-    // reference its fields to create HTML content
-    console.log(cities);
-    console.log(cities.cityOne);
-    
-    const citiesListElement = document.getElementById('cities-container');
-    citiesListElement.innerHTML = '';
-    citiesListElement.appendChild(
-        createListElement('First city: ' + cities.cityOne));
-    citiesListElement.appendChild(
-        createListElement('Second city: ' + cities.cityTwo));
-    citiesListElement.appendChild(
-        createListElement('Third city: ' + cities.cityThree));
-    
-  });
-}
-
 /** Creates an <li> element containing text. */
 function createListElement(text) {
   const liElement = document.createElement('li');
