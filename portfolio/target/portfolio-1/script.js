@@ -45,8 +45,8 @@ function createListElement(text) {
 
 function displayComments() {
   fetch('/add-comment').then(response => response.json()).then((comments) => {
-      
       console.log(comments);
+      console.log("test:");
     
       const commentList = document.getElementById('comment-container');
       comments.forEach((comment) => {
