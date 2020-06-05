@@ -42,7 +42,6 @@ function showCities() {
     // reference its fields to create HTML content
     console.log(cities);
     console.log(cities.cityOne);
-
     
     const citiesListElement = document.getElementById('cities-container');
     citiesListElement.innerHTML = '';
@@ -53,6 +52,25 @@ function showCities() {
     citiesListElement.appendChild(
         createListElement('Third city: ' + cities.cityThree));
     
+  });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+function displayComments() {
+  fetch('/add-comment').then(response => response.json()).then((comments) => {
+      
+      console.log(comments);
+    
+      const commentList = document.getElementById('comment-container');
+      comments.forEach((comment) => {
+        commentList.appendChild(createListElement(comment));
+      });
 
   });
 }

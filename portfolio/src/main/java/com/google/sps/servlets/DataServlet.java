@@ -50,8 +50,10 @@ public class DataServlet extends HttpServlet {
     // Send the JSON as the response
     response.setContentType("application/json;");
     response.getWriter().println(json);
-
   }
+
+
+  
 
   /**
    * Converts a ServerStats instance into a JSON string using manual String concatentation.

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
+  <body onload="displayComments()">
     <div id="content">
       <h1>Sophia Rosset</h1>
       <img src="images/FBProfile.jpg"/>
@@ -37,6 +37,16 @@
 
       <button id="cities-btn" onclick="showCities()">Show cities!</button>
       <ul id="cities-container"></ul>
+
+      <form action="/add-comment" method="POST">
+        <p id="com">Leave a comment: </p>
+        <textarea name="comment-input"></textarea>
+        <br/><br/>
+       <input type="submit" />
+      </form>
+
+    <ul id="comment-container"></ul>
+
     </div>
   </body>
 </html>

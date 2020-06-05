@@ -15,6 +15,15 @@
     text-align: center;
 }
 
+#com {
+    text-align: left;
+}
+.comment-input {
+    width: 80%;
+    height: 40px;
+}
+
+
 h1 {
     font-family: Cambria;
     text-align: center
