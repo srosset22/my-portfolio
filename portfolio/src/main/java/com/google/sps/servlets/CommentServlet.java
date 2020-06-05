@@ -19,13 +19,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-//import com.google.sps.data.ServerStats;
-//import com.google.gson.Gson;
 import java.util.Date;
 import com.google.sps.data.Comments;
 import java.util.ArrayList;
 import com.google.gson.Gson;
-
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/add-comment")
@@ -43,14 +43,22 @@ public class CommentServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Get the comment input from the form.
+    // Get the comment input from the form
     String comment = getParameter(request, "comment-input", "");
     response.setContentType("text/html;");
     //response.getWriter().println(comment);
     
-    //add new comment to the comments ArrayList:
+    //add new comment to the comments ArrayList
     comment_list.addToCommentsList(comment);
     response.getWriter().println(comment_list.getComment());
+
+    //store comments as entities in Datastore
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("content", comment);
+    //commentEntity.setProperty("author", author);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    datastore.put(commentEntity);
 
     // Redirect back to the HTML page.
     response.sendRedirect("/index.html");
