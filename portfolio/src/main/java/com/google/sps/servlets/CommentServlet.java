@@ -35,11 +35,11 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public class CommentServlet extends HttpServlet {
   
   Comments comment_list = new Comments();
+  Query query = new Query("Comment");
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Load comments from Datastore
-    Query query = new Query("Comment");
     DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = ds.prepare(query);
 
