@@ -37,6 +37,17 @@
       <div id="fact-container"></div>
 
       <div id="chart-container"></div>
+      <p>Vote</p>
+        <form action="/country-data" method="POST">
+        <select name="country">
+            <option value="Germany">Germany</option>
+            <option value="Italy">Italy</option>
+            <option value="France">France</option>
+            <option value="Greece">Greece</option>
+            <option value="Japan">Japan</option>
+        </select>
+        <button>Vote</button>
+        </form>
 
       <form action="/add-comment" method="POST">
         <p id="com">Leave a comment: </p>

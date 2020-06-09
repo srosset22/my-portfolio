@@ -62,24 +62,24 @@ function createListElement(text) {
   return liElement;
 }
 
-/** Creates a chart and adds it to the page. */
 function drawChart() {
-  const data = new google.visualization.DataTable();
-  data.addColumn('string', 'Animal');
-  data.addColumn('number', 'Count');
-        data.addRows([
-          ['Pasta', 10],
-          ['Strawberries', 5],
-          ['Chocolate', 15]
-        ]);
+  fetch('/country-data').then(response => response.json())
+  .then((countryVotes) => {
+    const data = new google.visualization.DataTable();
+    data.addColumn('string', 'Country');
+    data.addColumn('number', 'Votes');
+    Object.keys(countryVotes).forEach((country) => {
+      data.addRow([country, countryVotes[country]]);
+    });
 
-  const options = {
-    'title': 'Favorite foods',
-    'width':500,
-    'height':400
-  };
+    const options = {
+      'title': 'Which Country Should I Visit Next?',
+      'width':600,
+      'height':500
+    };
 
-  const chart = new google.visualization.PieChart(
-      document.getElementById('chart-container'));
-  chart.draw(data, options);
+    const chart = new google.visualization.ColumnChart(
+        document.getElementById('chart-container'));
+    chart.draw(data, options);
+  });
 }
