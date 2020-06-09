@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
   </head>
   <body onload="displayComments()">
@@ -35,6 +36,8 @@
       <button id="fact-btn" onclick="addRandomFact()">Fact!</button>
       <div id="fact-container"></div>
 
+      <div id="chart-container"></div>
+
       <form action="/add-comment" method="POST">
         <p id="com">Leave a comment: </p>
         <textarea name="comment-input"></textarea>
@@ -42,7 +45,7 @@
        <input type="submit" />
       </form>
 
-    <ul id="comment-container"></ul>
+      <ul id="comment-container"></ul>
 
     </div>
   </body>
