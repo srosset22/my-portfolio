@@ -51,12 +51,6 @@ public class CommentServlet extends HttpServlet {
     response.setContentType("application/json");
     String json = new Gson().toJson(existing_comments.getComment());
     response.getWriter().println(json);
-
-    
-    // Get comments in the form of JSON
-    //response.setContentType("application/json");
-    //String json = new Gson().toJson(comment_list.getComment());
-    //response.getWriter().println(json);
   }
 
   @Override
@@ -64,7 +58,6 @@ public class CommentServlet extends HttpServlet {
     // Get the comment input from the form
     String comment = getParameter(request, "comment-input", "");
     response.setContentType("text/html;");
-    //response.getWriter().println(comment);
     
     //add new comment to the comments ArrayList
     comment_list.addToCommentsList(comment);

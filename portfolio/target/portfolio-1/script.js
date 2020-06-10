@@ -55,13 +55,6 @@ function displayComments() {
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
-}
-
 function drawChart() {
   fetch('/country-data').then(response => response.json())
   .then((countryVotes) => {
