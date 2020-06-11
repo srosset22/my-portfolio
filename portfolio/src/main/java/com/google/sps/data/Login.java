@@ -31,4 +31,8 @@ public final class Login {
       return loginInfo;
   }
 
+  public String getEmail () {
+      return loginInfo.get(0);
+  }
+
 }

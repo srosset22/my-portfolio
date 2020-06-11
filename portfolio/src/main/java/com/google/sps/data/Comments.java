@@ -14,20 +14,21 @@
 
 package com.google.sps.data;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /** Class containing comment information. */
 
 public final class Comments {
 
-  // List of comments
-  private final ArrayList<String> comments = new ArrayList<>();
+  // List of comments and their authors
+  private final HashMap<String, String> comments = new HashMap<String, String>();
   
-  public void addToCommentsList(String comment) {
-      comments.add(comment);
+  public void addToCommentsList(String comment, String author) {
+      comments.put(comment, author);
       System.out.println(comments);
   }
 
-  public ArrayList<String> getComment () {
+  public HashMap<String, String> getComment () {
       return comments;
   }
 

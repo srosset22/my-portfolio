@@ -49,9 +49,21 @@ function createListElement(text) {
 function displayComments() {
   fetch('/add-comment').then(response => response.json()).then((comments) => {
       const commentList = document.getElementById('comment-container');
+      
+      for (var comment in comments) {
+        console.log(comment);
+        console.log(comments[comment]);
+        commentList.appendChild(createListElement(comments[comment]));
+        commentList.appendChild(createListElement(comment));
+      }
+      
+      /*
       comments.forEach((comment) => {
+        commentList.appendChild(createListElement(comments.get(comment)));
         commentList.appendChild(createListElement(comment));
       });
+    */
+
   });
 }
 
@@ -100,8 +112,6 @@ function fetchLoginStatus () {
         console.log(login);
         const loginContainer = document.getElementById('login-container');        
         loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
-        
-        //<a href="https://github.com/srosset22">GitHub</a>
         }
     });
 }
