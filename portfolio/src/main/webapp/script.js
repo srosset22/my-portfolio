@@ -46,12 +46,18 @@ function createListElement(text) {
   return liElement;
 }
 
+/** Creates an comment element containing author and content. */
+function createCommentElement(author, content) {
+  const com = document.createElement('li');
+  com.innerText = author + ": " + content;
+  return com;
+}
+
 function displayComments() {
   fetch('/add-comment').then(response => response.json()).then((comments) => {
       const commentList = document.getElementById('comment-container');
       for (var comment in comments) {
-        commentList.appendChild(createListElement(comments[comment]));
-        commentList.appendChild(createListElement(comment));
+        commentList.appendChild(createCommentElement(comments[comment], comment));
       }
   });
 }
