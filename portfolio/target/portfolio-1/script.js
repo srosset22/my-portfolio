@@ -58,9 +58,6 @@ function displayComments() {
       const commentList = document.getElementById('comment-container');
       for (var comment in comments) {
         commentList.appendChild(createCommentElement(comments[comment], comment));
-
-        //commentList.appendChild(createListElement(comments[comment]));
-        //commentList.appendChild(createListElement(comment));
       }
   });
 }
@@ -96,9 +93,6 @@ function fetchLoginStatus () {
         greeting.innerText = "Hello " + login.loginInfo[0];
         
         if (login.loginInfo[0].localeCompare("Guest") != 0){
-        console.log("Is logged in");
-        console.log(login);
-        console.log(login.loginInfo[0]);
         document.getElementById('comment-form').style.display = 'block';   
 
         const loginContainer = document.getElementById('login-container');
@@ -106,8 +100,6 @@ function fetchLoginStatus () {
 
         }
         else {
-        console.log("is not logged in");
-        console.log(login);
         const loginContainer = document.getElementById('login-container');        
         loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
         }
@@ -115,3 +107,13 @@ function fetchLoginStatus () {
 }
 
 fetchLoginStatus();
+
+/** Creates a map and adds it to the page. */
+function createMap() {
+  console.log("map test");
+  const map = new google.maps.Map(
+      document.getElementById('map'),
+      {center: {lat: 37.422, lng: -122.084}, zoom: 16});
+}
+
+createMap();

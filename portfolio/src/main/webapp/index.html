@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkezgbJgdd8Jklu141KJqESSQkIzcFlK0&callback=createMap"></script>
   </head>
-  <body onload="displayComments()">
+  <body onload="displayComments()" onload="createMap();">
     <div id="content">
       <h1>Sophia Rosset</h1>
       <img src="images/FBProfile.jpg"/>
@@ -35,6 +36,8 @@
       <p>Click here to view a random fact about me:</p>
       <button id="fact-btn" onclick="addRandomFact()">Fact!</button>
       <div id="fact-container"></div>
+
+      <div id="map"></div>
 
       <div id="chart-container"></div>
       <p>Vote</p>
