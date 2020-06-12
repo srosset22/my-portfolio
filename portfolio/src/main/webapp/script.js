@@ -93,9 +93,6 @@ function fetchLoginStatus () {
         greeting.innerText = "Hello " + login.loginInfo[0];
         
         if (login.loginInfo[0].localeCompare("Guest") != 0){
-        console.log("Is logged in");
-        console.log(login);
-        console.log(login.loginInfo[0]);
         document.getElementById('comment-form').style.display = 'block';   
 
         const loginContainer = document.getElementById('login-container');
@@ -103,8 +100,6 @@ function fetchLoginStatus () {
 
         }
         else {
-        console.log("is not logged in");
-        console.log(login);
         const loginContainer = document.getElementById('login-container');        
         loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
         }
