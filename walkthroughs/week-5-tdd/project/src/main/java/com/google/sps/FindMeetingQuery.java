@@ -27,13 +27,41 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     //throw new UnsupportedOperationException("TODO: Implement this method.");
 
-    //see which attendees are in the request and find each of their events
-    
+
+    Collection<TimeRange> answer = Arrays.asList(TimeRange.WHOLE_DAY);
+
     //list of requested meeting attendees
     Collection<String> requestedAttendees = request.getAttendees();
-    System.out.println(requestedAttendees);
+    if (requestedAttendees == null) {
+        return answer;
+    }
     
-    Collection<TimeRange> answer = null;
+    //duration of requested meeting
+    long duration = request.getDuration();
+    if (duration > TimeRange.WHOLE_DAY.duration()) {
+        answer = Arrays.asList();
+        return answer;
+    }
+
+    // The event should split the day into two options (before and after the event)
+    if (events.size() == 1) {
+        for (Event event : events) {
+            TimeRange eventTimeRange = event.getWhen();
+            int start = eventTimeRange.start();
+            int end = eventTimeRange.end();
+
+            Collection<TimeRange> splitDay = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false),
+            TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
+
+            return splitDay;
+            //answer+= splitDay;
+        }
+        //return answer;
+    }
+
+
+
+
     return answer;
 
   }
