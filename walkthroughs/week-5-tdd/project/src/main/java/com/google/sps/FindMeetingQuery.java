@@ -60,6 +60,30 @@ public final class FindMeetingQuery {
     }
 
 
+    if (events.size() == 2) {
+        int count = 0;
+        int firstStart = 0;
+        int firstEnd = 0;
+        int secondStart = 0;
+        int secondEnd = 0;
+        for (Event event : events) {
+            TimeRange eventTimeRange = event.getWhen();
+            if (count == 0) {
+                firstStart = eventTimeRange.start();
+                firstEnd = eventTimeRange.end();
+            }
+            else {
+                secondStart = eventTimeRange.start();
+                secondEnd = eventTimeRange.end();
+            }
+            count++;
+        }
+        Collection<TimeRange> times = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
+            TimeRange.fromStartEnd(firstEnd, secondStart, false),
+            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+        return times;
+    }
+    
 
 
     return answer;
