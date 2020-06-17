@@ -25,8 +25,6 @@ import com.google.sps.TimeRange;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    //throw new UnsupportedOperationException("TODO: Implement this method.");
-
 
     Collection<TimeRange> answer = Arrays.asList(TimeRange.WHOLE_DAY);
 
@@ -35,6 +33,22 @@ public final class FindMeetingQuery {
     if (requestedAttendees == null) {
         return answer;
     }
+
+    
+    //requested and existing event attendees don't match
+    if (requestedAttendees.size() == 1) {
+        for (Event event : events) {
+            Collection<String> eventAttendees = event.getAttendees();
+            for (String eventAttendee : eventAttendees) {
+                for (String reqAttendee : requestedAttendees) {
+                    if (!(eventAttendee.equals(reqAttendee))) {
+                    return answer;
+                    }
+                }
+            }
+        }
+    }
+    
     
     //duration of requested meeting
     long duration = request.getDuration();
@@ -57,7 +71,6 @@ public final class FindMeetingQuery {
         }
     }
 
-
     if (events.size() == 2) {
         TimeRange eventOneTimeRange = null;
         TimeRange eventTwoTimeRange = null;
@@ -76,7 +89,6 @@ public final class FindMeetingQuery {
         int secondStart = eventTwoTimeRange.start();
         int secondEnd = eventTwoTimeRange.end();
 
-        
         if (eventOneTimeRange.contains(eventTwoTimeRange)) {
             Collection<TimeRange> containedTimes = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
             TimeRange.fromStartEnd(firstEnd, TimeRange.END_OF_DAY, true));
@@ -92,6 +104,17 @@ public final class FindMeetingQuery {
             Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
             TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
             return overlapTimes;
+        }
+        else if (firstStart == 0 && secondEnd == 1440) {
+            int actualDuration = secondStart - firstEnd;
+            if (duration > actualDuration) {
+                //not enough time
+                Collection<TimeRange> noTime = Arrays.asList();
+                return noTime;
+            }
+            //just enough time
+            Collection<TimeRange> justEnoughTime = Arrays.asList(TimeRange.fromStartEnd(firstEnd, secondStart, false));
+            return justEnoughTime;
         }
 
         Collection<TimeRange> times = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
