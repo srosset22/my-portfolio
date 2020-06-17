@@ -34,7 +34,9 @@ public final class FindMeetingQuery {
         return answer;
     }
 
-    
+    // list of optional meeting attendees
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
+
     //requested and existing event attendees don't match
     if (requestedAttendees.size() == 1) {
         for (Event event : events) {
@@ -48,7 +50,6 @@ public final class FindMeetingQuery {
             }
         }
     }
-    
     
     //duration of requested meeting
     long duration = request.getDuration();
@@ -71,16 +72,20 @@ public final class FindMeetingQuery {
         }
     }
 
-    if (events.size() == 2) {
+    if (events.size() >= 2) {
         TimeRange eventOneTimeRange = null;
         TimeRange eventTwoTimeRange = null;
+        TimeRange eventThreeTimeRange = null;
         int count = 0;
         for (Event event : events) {
             if (count == 0) {
                 eventOneTimeRange = event.getWhen();
             }
-            else {
+            else if (count == 1) {
                 eventTwoTimeRange = event.getWhen();
+            }
+            else {
+                eventThreeTimeRange = event.getWhen();
             }
             count++;
         }
@@ -120,14 +125,15 @@ public final class FindMeetingQuery {
         Collection<TimeRange> times = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
             TimeRange.fromStartEnd(firstEnd, secondStart, false),
             TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+
+        //if (optionalAttendees.size() == 1) {
+
+
+        //}
         
         return times;
     }
-    
-    
-
 
     return answer;
-
   }
 }
