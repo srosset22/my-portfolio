@@ -54,35 +54,53 @@ public final class FindMeetingQuery {
             TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
 
             return splitDay;
-            //answer+= splitDay;
         }
-        //return answer;
     }
 
 
     if (events.size() == 2) {
+        TimeRange eventOneTimeRange = null;
+        TimeRange eventTwoTimeRange = null;
         int count = 0;
-        int firstStart = 0;
-        int firstEnd = 0;
-        int secondStart = 0;
-        int secondEnd = 0;
         for (Event event : events) {
-            TimeRange eventTimeRange = event.getWhen();
             if (count == 0) {
-                firstStart = eventTimeRange.start();
-                firstEnd = eventTimeRange.end();
+                eventOneTimeRange = event.getWhen();
             }
             else {
-                secondStart = eventTimeRange.start();
-                secondEnd = eventTimeRange.end();
+                eventTwoTimeRange = event.getWhen();
             }
             count++;
         }
+        int firstStart = eventOneTimeRange.start();
+        int firstEnd = eventOneTimeRange.end();
+        int secondStart = eventTwoTimeRange.start();
+        int secondEnd = eventTwoTimeRange.end();
+
+        
+        if (eventOneTimeRange.contains(eventTwoTimeRange)) {
+            Collection<TimeRange> containedTimes = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
+            TimeRange.fromStartEnd(firstEnd, TimeRange.END_OF_DAY, true));
+            return containedTimes;
+        }
+        else if (eventTwoTimeRange.contains(eventOneTimeRange)) {
+            Collection<TimeRange> containedTimes = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, secondStart, false),
+            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+            return containedTimes;
+        }
+        else if (eventOneTimeRange.overlaps(eventTwoTimeRange)) {
+            Collection<TimeRange> overlapTimes =
+            Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
+            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+            return overlapTimes;
+        }
+
         Collection<TimeRange> times = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
             TimeRange.fromStartEnd(firstEnd, secondStart, false),
             TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+        
         return times;
     }
+    
     
 
 
