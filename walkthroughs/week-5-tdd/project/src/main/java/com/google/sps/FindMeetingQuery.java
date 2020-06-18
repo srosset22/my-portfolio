@@ -15,6 +15,7 @@
 package com.google.sps;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +37,11 @@ public final class FindMeetingQuery {
 
     // list of optional meeting attendees
     Collection<String> optionalAttendees = request.getOptionalAttendees();
+
+    //list of all events
+    List<Event> allEvents = new ArrayList<Event>();
+    allEvents.addAll(events);
+    //sortByStart(allEvents);
 
     //requested and existing event attendees don't match
     if (requestedAttendees.size() == 1) {
@@ -60,16 +66,13 @@ public final class FindMeetingQuery {
 
     // The event should split the day into two options (before and after the event)
     if (events.size() == 1) {
-        for (Event event : events) {
-            TimeRange eventTimeRange = event.getWhen();
-            int start = eventTimeRange.start();
-            int end = eventTimeRange.end();
-
-            Collection<TimeRange> splitDay = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false),
+        Event e = allEvents.get(0);
+        TimeRange eventTimeRange = e.getWhen();
+        int start = eventTimeRange.start();
+        int end = eventTimeRange.end();
+        Collection<TimeRange> splitDay = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false),
             TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
-
-            return splitDay;
-        }
+        return splitDay;
     }
 
     if (events.size() >= 2) {
@@ -122,13 +125,12 @@ public final class FindMeetingQuery {
             return justEnoughTime;
         }
 
-        Collection<TimeRange> times = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
-            TimeRange.fromStartEnd(firstEnd, secondStart, false),
-            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
+        TimeRange before = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false);
+        TimeRange middle = TimeRange.fromStartEnd(firstEnd, secondStart, false);
+        TimeRange after = TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true);
+        Collection<TimeRange> times = Arrays.asList(before, middle, after);
 
         //if (optionalAttendees.size() == 1) {
-
-
         //}
         
         return times;
