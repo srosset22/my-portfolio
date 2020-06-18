@@ -20,11 +20,23 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import com.google.sps.Events;
 import com.google.sps.MeetingRequest;
 import com.google.sps.TimeRange;
 
 public final class FindMeetingQuery {
+    
+    public boolean optionalAttendeesOnly(Event event, Collection<String> optionalAttendees) {
+        Set<String> eventAttendees = event.getAttendees();
+        for (String optAttendee : optionalAttendees) {
+            if (eventAttendees.contains(optAttendee)) {
+                return true;
+            }
+        }
+        return false;
+    }
+  
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
     Collection<TimeRange> answer = Arrays.asList(TimeRange.WHOLE_DAY);
@@ -42,6 +54,18 @@ public final class FindMeetingQuery {
     List<Event> allEvents = new ArrayList<Event>();
     allEvents.addAll(events);
     //sortByStart(allEvents);
+
+    // list of optional attendee events
+    List<Event> optionalAttendeeEvents = new ArrayList<Event>();
+    for (Event event : events) {
+        if (optionalAttendeesOnly(event, optionalAttendees)) {
+            optionalAttendeeEvents.add(event);
+        }
+    }
+
+    List<Event> mandatoryAttendeeEvents = new ArrayList<Event>();
+    mandatoryAttendeeEvents.addAll(allEvents);
+    mandatoryAttendeeEvents.remove(optionalAttendeeEvents);
 
     //requested and existing event attendees don't match
     if (requestedAttendees.size() == 1) {
