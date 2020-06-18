@@ -14,22 +14,25 @@
 
 package com.google.sps.data;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-/** Class containing comment information. */
+/** Class containing login information. */
 
-public final class Comments {
+public final class Login {
 
-  // List of comments and their authors
-  private final Map<String, String> comments = new HashMap<>();
-  
-  public void addToCommentsList(String comment, String author) {
-      comments.put(comment, author);
-      System.out.println(comments);
+  // List of login info (email, login or logout link)
+  private final List<String> loginInfo = new ArrayList<>();
+
+  public void addToLoginList(String info) {
+      loginInfo.add(info);
+      System.out.println(loginInfo);
   }
 
-  public Map<String, String> getComment () {
-      return comments;
+  public List<String> getLoginInfo () {
+      return loginInfo;
+  }
+
+  public String getEmail () {
+      return loginInfo.get(0);
   }
 
 }

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+
 public final class MeetingRequest {
   // All the people that should be attending this new meeting. Use a set to avoid duplicates.
   private final Collection<String> attendees = new HashSet<>();
@@ -33,6 +34,12 @@ public final class MeetingRequest {
   public MeetingRequest(Collection<String> attendees, long duration) {
     this.duration = duration;
     this.attendees.addAll(attendees);
+  }
+
+  public MeetingRequest(Collection<String> attendees, Collection<String> optional_attendees, long duration) {
+    this.duration = duration;
+    this.attendees.addAll(attendees);
+    this.optional_attendees.addAll(optional_attendees);
   }
 
   /**

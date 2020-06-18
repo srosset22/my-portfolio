@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>My Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkezgbJgdd8Jklu141KJqESSQkIzcFlK0&callback=createMap"></script>
   </head>
-  <body onload="displayComments()">
+  <body onload="displayComments()" onload="createMap();">
     <div id="content">
       <h1>Sophia Rosset</h1>
       <img src="images/FBProfile.jpg"/>
@@ -35,14 +37,35 @@
       <button id="fact-btn" onclick="addRandomFact()">Fact!</button>
       <div id="fact-container"></div>
 
+      <div id="map"></div>
+
+      <div id="chart-container"></div>
+      <p>Vote</p>
+        <form action="/country-data" method="POST">
+        <select name="country">
+            <option value="Germany">Germany</option>
+            <option value="Italy">Italy</option>
+            <option value="France">France</option>
+            <option value="Greece">Greece</option>
+            <option value="Japan">Japan</option>
+        </select>
+        <button>Vote</button>
+        </form> <br><br>
+
+      <div id="login-greeting"></div>
+      <div id="login-container"></div>
+
+      <div id="comment-form">
       <form action="/add-comment" method="POST">
         <p id="com">Leave a comment: </p>
         <textarea name="comment-input"></textarea>
         <br/><br/>
        <input type="submit" />
       </form>
-
-    <ul id="comment-container"></ul>
+      </div>
+           
+      <p>Comments:</p>
+      <ul id="comment-container"></ul>
 
     </div>
   </body>

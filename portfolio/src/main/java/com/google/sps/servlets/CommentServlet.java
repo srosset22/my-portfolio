@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import com.google.sps.data.Comments;
+import com.google.sps.data.Login;
 import java.util.ArrayList;
+import java.util.HashMap;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -29,6 +31,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/add-comment")
@@ -36,6 +40,7 @@ public class CommentServlet extends HttpServlet {
   
   Comments comment_list = new Comments();
   Query query = new Query("Comment");
+  UserService userService = UserServiceFactory.getUserService();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -46,17 +51,12 @@ public class CommentServlet extends HttpServlet {
     Comments existing_comments = new Comments();
     for (Entity entity : results.asIterable()) {
       String comment = (String) entity.getProperty("content");
-      existing_comments.addToCommentsList(comment);
+      String author = (String) entity.getProperty("author");
+      existing_comments.addToCommentsList(comment, author);
     }
     response.setContentType("application/json");
     String json = new Gson().toJson(existing_comments.getComment());
     response.getWriter().println(json);
-
-    
-    // Get comments in the form of JSON
-    //response.setContentType("application/json");
-    //String json = new Gson().toJson(comment_list.getComment());
-    //response.getWriter().println(json);
   }
 
   @Override
@@ -64,16 +64,18 @@ public class CommentServlet extends HttpServlet {
     // Get the comment input from the form
     String comment = getParameter(request, "comment-input", "");
     response.setContentType("text/html;");
-    //response.getWriter().println(comment);
-    
-    //add new comment to the comments ArrayList
-    comment_list.addToCommentsList(comment);
+
+    //get current user's email address
+    String author = userService.getCurrentUser().getEmail();
+
+    //add new comment and its author to the comments HashMap
+    comment_list.addToCommentsList(comment, author);
     response.getWriter().println(comment_list.getComment());
 
     //store comments as entities in Datastore
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("content", comment);
-    //commentEntity.setProperty("author", author);
+    commentEntity.setProperty("author", author);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
