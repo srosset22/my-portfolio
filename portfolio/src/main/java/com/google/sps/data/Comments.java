@@ -21,14 +21,14 @@ import java.util.HashMap;
 public final class Comments {
 
   // List of comments and their authors
-  private final HashMap<String, String> comments = new HashMap<String, String>();
+  private final Map<String, String> comments = new HashMap<>();
   
   public void addToCommentsList(String comment, String author) {
       comments.put(comment, author);
       System.out.println(comments);
   }
 
-  public HashMap<String, String> getComment () {
+  public Map<String, String> getComment () {
       return comments;
   }
 

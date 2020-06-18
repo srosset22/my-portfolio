@@ -20,14 +20,14 @@ import java.util.ArrayList;
 public final class Login {
 
   // List of login info (email, login or logout link)
-  private final ArrayList<String> loginInfo = new ArrayList<>();
+  private final List<String> loginInfo = new ArrayList<>();
 
   public void addToLoginList(String info) {
       loginInfo.add(info);
       System.out.println(loginInfo);
   }
 
-  public ArrayList<String> getLoginInfo () {
+  public List<String> getLoginInfo () {
       return loginInfo;
   }
 

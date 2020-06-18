@@ -34,6 +34,8 @@ public class LoginServlet extends HttpServlet {
     Login login_info = new Login();
 
     UserService userService = UserServiceFactory.getUserService();
+    Gson gson = new Gson();
+    
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/";
@@ -43,11 +45,9 @@ public class LoginServlet extends HttpServlet {
       login_info.addToLoginList(logoutUrl);
 
       response.setContentType("application/json");
-      Gson gson = new Gson();
-      String json = gson.toJson(login_info);
-      response.getWriter().println(json);
-      
-    } else {
+      String json = gson.toJson(login_info);      
+    } 
+    else {
       String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
     
@@ -55,10 +55,8 @@ public class LoginServlet extends HttpServlet {
       login_info.addToLoginList(loginUrl);
 
       response.setContentType("application/json");
-      Gson gson = new Gson();
       String json = gson.toJson(login_info);
-      response.getWriter().println(json);
-
     }
+    response.getWriter().println(json);
   }
 }
