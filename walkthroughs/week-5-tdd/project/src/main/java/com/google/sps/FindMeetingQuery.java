@@ -31,6 +31,10 @@ public final class FindMeetingQuery {
 
     Collection<TimeRange> answer = Arrays.asList(TimeRange.WHOLE_DAY);
 
+    if (events == null) {
+        return answer; 
+    }
+
     //list of requested meeting attendees
     Collection<String> requestedAttendees = request.getAttendees();
     if (requestedAttendees == null) {
@@ -43,10 +47,6 @@ public final class FindMeetingQuery {
     //list of all events
     List<Event> allEvents = new ArrayList<Event>();
     allEvents.addAll(events);
-
-    if (allEvents == null) {
-        return answer;
-    }
 
     // list of optional attendee events
     List<Event> optionalAttendeeEvents = new ArrayList<Event>();
@@ -134,18 +134,17 @@ public final class FindMeetingQuery {
             int nextEventEnd = nextEvent.end();
 
             if (!curEvent.overlaps(nextEvent)) {
-                TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextEventStart, false);
                 int timeBetweenEventsInt = nextEventStart - curEventEnd;
                 if (timeBetweenEventsInt >= requestedDuration) {
-                    possibleTimes.add(timeBetweenEvents);
+                    possibleTimes.add(TimeRange.fromStartEnd(curEventEnd, nextEventStart, false));
                 } 
             }
             else if (curEvent.overlaps(nextEvent)) {
                 if (curEventEnd > nextEventEnd) {   //nested events
                    if (events.size() > i+1) {
                         TimeRange nextnextEvent = events.get(i+1).getWhen();
-                       int nextnextEventStart = nextnextEvent.start();
-                       TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextnextEventStart, false);
+                        int nextnextEventStart = nextnextEvent.start();
+                        TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextnextEventStart, false);
                         int timeBetweenEventsInt = nextnextEventStart - curEventEnd;
                         if (timeBetweenEventsInt >= requestedDuration) {
                             possibleTimes.add(timeBetweenEvents);
