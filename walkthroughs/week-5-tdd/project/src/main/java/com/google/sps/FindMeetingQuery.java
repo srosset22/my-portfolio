@@ -26,16 +26,6 @@ import com.google.sps.MeetingRequest;
 import com.google.sps.TimeRange;
 
 public final class FindMeetingQuery {
-    
-    public boolean optionalAttendeesOnly(Event event, Collection<String> optionalAttendees) {
-        Set<String> eventAttendees = event.getAttendees();
-        for (String optAttendee : optionalAttendees) {
-            if (eventAttendees.contains(optAttendee)) {
-                return true;
-            }
-        }
-        return false;
-    }
   
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
@@ -53,7 +43,10 @@ public final class FindMeetingQuery {
     //list of all events
     List<Event> allEvents = new ArrayList<Event>();
     allEvents.addAll(events);
-    //sortByStart(allEvents);
+
+    if (allEvents == null) {
+        return answer;
+    }
 
     // list of optional attendee events
     List<Event> optionalAttendeeEvents = new ArrayList<Event>();
@@ -65,7 +58,9 @@ public final class FindMeetingQuery {
 
     List<Event> mandatoryAttendeeEvents = new ArrayList<Event>();
     mandatoryAttendeeEvents.addAll(allEvents);
-    mandatoryAttendeeEvents.remove(optionalAttendeeEvents);
+    for (Event event : optionalAttendeeEvents) {
+        mandatoryAttendeeEvents.remove(event);
+    }
 
     //requested and existing event attendees don't match
     if (requestedAttendees.size() == 1) {
@@ -81,7 +76,7 @@ public final class FindMeetingQuery {
         }
     }
     
-    //duration of requested meeting
+    // duration of requested meeting
     long duration = request.getDuration();
     if (duration > TimeRange.WHOLE_DAY.duration()) {
         answer = Arrays.asList();
@@ -89,7 +84,7 @@ public final class FindMeetingQuery {
     }
 
     // The event should split the day into two options (before and after the event)
-    if (events.size() == 1) {
+    if (allEvents.size() == 1) {
         Event e = allEvents.get(0);
         TimeRange eventTimeRange = e.getWhen();
         int start = eventTimeRange.start();
@@ -98,68 +93,87 @@ public final class FindMeetingQuery {
             TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
         return splitDay;
     }
+ 
+    Collection<TimeRange> everyoneTimeOptions = getAllTimes(allEvents, request);
 
-    if (events.size() >= 2) {
-        TimeRange eventOneTimeRange = null;
-        TimeRange eventTwoTimeRange = null;
-        TimeRange eventThreeTimeRange = null;
-        int count = 0;
-        for (Event event : events) {
-            if (count == 0) {
-                eventOneTimeRange = event.getWhen();
-            }
-            else if (count == 1) {
-                eventTwoTimeRange = event.getWhen();
-            }
-            else {
-                eventThreeTimeRange = event.getWhen();
-            }
-            count++;
-        }
-        int firstStart = eventOneTimeRange.start();
-        int firstEnd = eventOneTimeRange.end();
-        int secondStart = eventTwoTimeRange.start();
-        int secondEnd = eventTwoTimeRange.end();
-
-        if (eventOneTimeRange.contains(eventTwoTimeRange)) {
-            Collection<TimeRange> containedTimes = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
-            TimeRange.fromStartEnd(firstEnd, TimeRange.END_OF_DAY, true));
-            return containedTimes;
-        }
-        else if (eventTwoTimeRange.contains(eventOneTimeRange)) {
-            Collection<TimeRange> containedTimes = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, secondStart, false),
-            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
-            return containedTimes;
-        }
-        else if (eventOneTimeRange.overlaps(eventTwoTimeRange)) {
-            Collection<TimeRange> overlapTimes =
-            Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false),
-            TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true));
-            return overlapTimes;
-        }
-        else if (firstStart == 0 && secondEnd == 1440) {
-            int actualDuration = secondStart - firstEnd;
-            if (duration > actualDuration) {
-                //not enough time
-                Collection<TimeRange> noTime = Arrays.asList();
-                return noTime;
-            }
-            //just enough time
-            Collection<TimeRange> justEnoughTime = Arrays.asList(TimeRange.fromStartEnd(firstEnd, secondStart, false));
-            return justEnoughTime;
-        }
-
-        TimeRange before = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, firstStart, false);
-        TimeRange middle = TimeRange.fromStartEnd(firstEnd, secondStart, false);
-        TimeRange after = TimeRange.fromStartEnd(secondEnd, TimeRange.END_OF_DAY, true);
-        Collection<TimeRange> times = Arrays.asList(before, middle, after);
-
-        //if (optionalAttendees.size() == 1) {
-        //}
-        
-        return times;
+    if (everyoneTimeOptions.isEmpty() && !mandatoryAttendeeEvents.isEmpty()) {
+        return getAllTimes(mandatoryAttendeeEvents, request);
     }
 
-    return answer;
+    return everyoneTimeOptions;
   }
+
+    private boolean optionalAttendeesOnly(Event event, Collection<String> optionalAttendees) {
+        Set<String> eventAttendees = event.getAttendees();
+        for (String optAttendee : optionalAttendees) {
+            if (eventAttendees.contains(optAttendee)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Collection<TimeRange> getAllTimes (List<Event> events, MeetingRequest request) {
+        Collection<TimeRange> possibleTimes = new ArrayList<TimeRange>();
+        long requestedDuration = request.getDuration();
+        boolean last = false;
+
+        Event firstEvent = events.get(0);
+        TimeRange firstStart = firstEvent.getWhen();
+        int start = firstStart.start();
+        TimeRange before = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false);
+        if (TimeRange.START_OF_DAY != start) {
+            possibleTimes.add(before);
+        }
+
+        for (int i = 1; i < events.size(); i++) {
+            TimeRange curEvent = events.get(i-1).getWhen();
+            TimeRange nextEvent = events.get(i).getWhen();
+            int curEventEnd = curEvent.end();
+            int nextEventStart = nextEvent.start();
+            int nextEventEnd = nextEvent.end();
+
+            if (!curEvent.overlaps(nextEvent)) {
+                TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextEventStart, false);
+                int timeBetweenEventsInt = nextEventStart - curEventEnd;
+                if (timeBetweenEventsInt >= requestedDuration) {
+                    possibleTimes.add(timeBetweenEvents);
+                } 
+            }
+            else if (curEvent.overlaps(nextEvent)) {
+                if (curEventEnd > nextEventEnd) {   //nested events
+                   if (events.size() > i+1) {
+                        TimeRange nextnextEvent = events.get(i+1).getWhen();
+                       int nextnextEventStart = nextnextEvent.start();
+                       TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextnextEventStart, false);
+                        int timeBetweenEventsInt = nextnextEventStart - curEventEnd;
+                        if (timeBetweenEventsInt >= requestedDuration) {
+                            possibleTimes.add(timeBetweenEvents);
+                        }         
+                   }
+                   else {
+                        last = true;
+                        TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, TimeRange.END_OF_DAY, true);
+                       int timeBetweenEventsInt = TimeRange.END_OF_DAY - curEventEnd;
+                        if (timeBetweenEventsInt >= requestedDuration) {
+                            possibleTimes.add(timeBetweenEvents);
+                        }    
+                    }
+                }
+            }
+        }
+        
+        Event lastEvent = events.get(events.size()-1);
+        TimeRange lastEnd = lastEvent.getWhen();
+        int end = lastEnd.end();
+        TimeRange after = TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true);
+        if (!last) {
+            if (TimeRange.END_OF_DAY >= end){
+                possibleTimes.add(after);
+            }    
+        }    
+        
+        return possibleTimes;
+    }    
+
 }
