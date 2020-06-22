@@ -22,10 +22,10 @@ function addRandomFact() {
   const facts =
       ['I am half Brazilian', 'I love long distance running', 'I play the piano'];
 
-  // Pick a random greeting.
+  // Pick a random greeting
   const fact = facts[Math.floor(Math.random() * facts.length)];
 
-  // Add it to the page.
+  // Add it to the page
   const factContainer = document.getElementById('fact-container');
   factContainer.innerText = fact;
 }
@@ -55,13 +55,6 @@ function displayComments() {
   });
 }
 
-/** Creates an <li> element containing text. */
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
-}
-
 function drawChart() {
   fetch('/country-data').then(response => response.json())
   .then((countryVotes) => {
@@ -83,3 +76,34 @@ function drawChart() {
     chart.draw(data, options);
   });
 }
+
+//Fetches the login status from the servlet. If user is logged in, unhide comment form
+//if user is not logged in, display a login link
+
+function fetchLoginStatus () {
+    fetch('/login').then(response => response.json()).then((login) => {
+        const greeting = document.getElementById('login-greeting');
+        greeting.innerText = "Hello " + login.loginInfo[0];
+        
+        if (login.loginInfo[0].localeCompare("Guest") != 0){
+        console.log("Is logged in");
+        console.log(login);
+        console.log(login.loginInfo[0]);
+        document.getElementById('comment-form').style.display = 'block';   
+
+        const loginContainer = document.getElementById('login-container');
+        loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Logout here</a>';
+
+        }
+        else {
+        console.log("is not logged in");
+        console.log(login);
+        const loginContainer = document.getElementById('login-container');        
+        loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
+        
+        //<a href="https://github.com/srosset22">GitHub</a>
+        }
+    });
+}
+
+fetchLoginStatus();
