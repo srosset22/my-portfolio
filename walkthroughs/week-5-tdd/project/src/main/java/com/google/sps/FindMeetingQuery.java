@@ -69,7 +69,7 @@ public final class FindMeetingQuery {
             for (String eventAttendee : eventAttendees) {
                 for (String reqAttendee : requestedAttendees) {
                     if (!(eventAttendee.equals(reqAttendee))) {
-                    return answer;
+                        return answer;
                     }
                 }
             }
@@ -125,7 +125,6 @@ public final class FindMeetingQuery {
         if (TimeRange.START_OF_DAY != start) {
             possibleTimes.add(before);
         }
-
         for (int i = 1; i < events.size(); i++) {
             TimeRange curEvent = events.get(i-1).getWhen();
             TimeRange nextEvent = events.get(i).getWhen();
@@ -138,10 +137,9 @@ public final class FindMeetingQuery {
                 if (timeBetweenEventsInt >= requestedDuration) {
                     possibleTimes.add(TimeRange.fromStartEnd(curEventEnd, nextEventStart, false));
                 } 
-            }
-            else if (curEvent.overlaps(nextEvent)) {
+            } else if (curEvent.overlaps(nextEvent)) {
                 if (curEventEnd > nextEventEnd) {   //nested events
-                   if (events.size() > i+1) {
+                    if (events.size() > i+1) {
                         TimeRange nextnextEvent = events.get(i+1).getWhen();
                         int nextnextEventStart = nextnextEvent.start();
                         TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, nextnextEventStart, false);
@@ -149,11 +147,10 @@ public final class FindMeetingQuery {
                         if (timeBetweenEventsInt >= requestedDuration) {
                             possibleTimes.add(timeBetweenEvents);
                         }         
-                   }
-                   else {
+                   } else {
                         last = true;
                         TimeRange timeBetweenEvents = TimeRange.fromStartEnd(curEventEnd, TimeRange.END_OF_DAY, true);
-                       int timeBetweenEventsInt = TimeRange.END_OF_DAY - curEventEnd;
+                        int timeBetweenEventsInt = TimeRange.END_OF_DAY - curEventEnd;
                         if (timeBetweenEventsInt >= requestedDuration) {
                             possibleTimes.add(timeBetweenEvents);
                         }    

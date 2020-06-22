@@ -97,8 +97,7 @@ function fetchLoginStatus () {
 
             const loginContainer = document.getElementById('login-container');
             loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Logout here</a>';
-        }
-        else {
+        } else {
             const loginContainer = document.getElementById('login-container');        
             loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
         }

@@ -35,7 +35,6 @@ public class LoginServlet extends HttpServlet {
 
     UserService userService = UserServiceFactory.getUserService();
     Gson gson = new Gson();
-    String json = "";
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
       String logoutUrl = userService.createLogoutURL("/");
@@ -44,17 +43,15 @@ public class LoginServlet extends HttpServlet {
       login_info.addToLoginList(logoutUrl);
 
       response.setContentType("application/json");
-      json = gson.toJson(login_info);      
-    } 
-    else {
+    } else {
       String loginUrl = userService.createLoginURL("/");
     
       login_info.addToLoginList("Guest");
       login_info.addToLoginList(loginUrl);
 
       response.setContentType("application/json");
-      json = gson.toJson(login_info);
     }
+    String json = gson.toJson(login_info);
     response.getWriter().println(json);
   }
 }
