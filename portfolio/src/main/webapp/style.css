@@ -11,6 +11,10 @@
   color:red;
 }
 
+#comment-form {
+    display:none;
+}
+
 #fact-btn {
     text-align: center;
 }
