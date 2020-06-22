@@ -56,7 +56,7 @@ function createCommentElement(author, content) {
 function displayComments() {
   fetch('/add-comment').then(response => response.json()).then((comments) => {
       const commentList = document.getElementById('comment-container');
-      for (var comment in comments) {
+      for (const comment in comments) {
         commentList.appendChild(createCommentElement(comments[comment], comment));
       }
   });
@@ -93,15 +93,13 @@ function fetchLoginStatus () {
         greeting.innerText = "Hello " + login.loginInfo[0];
         
         if (login.loginInfo[0].localeCompare("Guest") != 0){
-        document.getElementById('comment-form').style.display = 'block';   
+            document.getElementById('comment-form').style.display = 'block';   
 
-        const loginContainer = document.getElementById('login-container');
-        loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Logout here</a>';
-
-        }
-        else {
-        const loginContainer = document.getElementById('login-container');        
-        loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
+            const loginContainer = document.getElementById('login-container');
+            loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Logout here</a>';
+        } else {
+            const loginContainer = document.getElementById('login-container');        
+            loginContainer.innerHTML = '<a href="' + login.loginInfo[1] + '">Login here</a>';
         }
     });
 }
@@ -115,5 +113,3 @@ function createMap() {
       document.getElementById('map'),
       {center: {lat: 37.422, lng: -122.084}, zoom: 16});
 }
-
-//createMap();
