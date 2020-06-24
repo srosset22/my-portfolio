@@ -30,9 +30,15 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
 
     Collection<TimeRange> answer = Arrays.asList(TimeRange.WHOLE_DAY);
+    
+    // duration of requested meeting
+    long duration = request.getDuration();
+    if (duration >= TimeRange.WHOLE_DAY.duration()) {
+        return Arrays.asList();
+    }
 
-    if (events == null) {
-        return answer; 
+    if (events.isEmpty()) {
+        return answer;
     }
 
     //list of requested meeting attendees
@@ -53,6 +59,7 @@ public final class FindMeetingQuery {
     for (Event event : events) {
         if (optionalAttendeesOnly(event, optionalAttendees)) {
             optionalAttendeeEvents.add(event);
+            System.out.println("optional event(s):" + event);
         }
     }
 
@@ -61,6 +68,8 @@ public final class FindMeetingQuery {
     for (Event event : optionalAttendeeEvents) {
         mandatoryAttendeeEvents.remove(event);
     }
+    System.out.println("mandatory events:" + mandatoryAttendeeEvents);
+
 
     //requested and existing event attendees don't match
     if (requestedAttendees.size() == 1) {
@@ -75,28 +84,14 @@ public final class FindMeetingQuery {
             }
         }
     }
-    
-    // duration of requested meeting
-    long duration = request.getDuration();
-    if (duration > TimeRange.WHOLE_DAY.duration()) {
-        answer = Arrays.asList();
-        return answer;
-    }
-
-    // The event should split the day into two options (before and after the event)
-    if (allEvents.size() == 1) {
-        Event e = allEvents.get(0);
-        TimeRange eventTimeRange = e.getWhen();
-        int start = eventTimeRange.start();
-        int end = eventTimeRange.end();
-        Collection<TimeRange> splitDay = Arrays.asList(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false),
-            TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
-        return splitDay;
-    }
  
     Collection<TimeRange> everyoneTimeOptions = getAllTimes(allEvents, request);
 
     if (everyoneTimeOptions.isEmpty() && !mandatoryAttendeeEvents.isEmpty()) {
+        System.out.println("Second call: on mandatory events only");
+        System.out.println("mand:" + mandatoryAttendeeEvents);
+        System.out.println("opt: " + optionalAttendeeEvents);
+        
         return getAllTimes(mandatoryAttendeeEvents, request);
     }
 
@@ -116,6 +111,7 @@ public final class FindMeetingQuery {
     private Collection<TimeRange> getAllTimes (List<Event> events, MeetingRequest request) {
         Collection<TimeRange> possibleTimes = new ArrayList<TimeRange>();
         long requestedDuration = request.getDuration();
+        int wholeDayDuration = TimeRange.WHOLE_DAY.duration();
         boolean last = false;
 
         Event firstEvent = events.get(0);
@@ -123,7 +119,7 @@ public final class FindMeetingQuery {
         int start = firstStart.start();
         TimeRange before = TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false);
         if (TimeRange.START_OF_DAY != start) {
-            possibleTimes.add(before);
+            possibleTimes.add(before); 
         }
         for (int i = 1; i < events.size(); i++) {
             TimeRange curEvent = events.get(i-1).getWhen();
@@ -163,12 +159,11 @@ public final class FindMeetingQuery {
         TimeRange lastEnd = lastEvent.getWhen();
         int end = lastEnd.end();
         TimeRange after = TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true);
-        if (!last) {
-            if (TimeRange.END_OF_DAY >= end){
-                possibleTimes.add(after);
-            }    
-        }    
-        
+        int timeAfterEventsInt = TimeRange.END_OF_DAY - end;
+        if (!last && TimeRange.END_OF_DAY >= end){
+            possibleTimes.add(after);
+        }   
+
         return possibleTimes;
     }    
 }
